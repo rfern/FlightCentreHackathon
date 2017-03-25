@@ -9,4 +9,6 @@ import './index.css';
 // http://stackoverflow.com/a/34015469/988941
 injectTapEventPlugin();
 
+import 'aframe';
+
 ReactDOM.render(<App />, document.getElementById('root'));
