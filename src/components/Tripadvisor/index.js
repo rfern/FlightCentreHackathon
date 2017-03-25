@@ -6,7 +6,7 @@ import './style.css'
 const google = window.google;
 const findDomNode = (node) => ReactDom.findDOMNode(node);
 
-var Steepless = {
+var TravelAdvisor = {
 	directionsService: new google.maps.DirectionsService(),
 	directionsRenderer: new google.maps.DirectionsRenderer(),
 	elevationService: new google.maps.ElevationService(),
@@ -23,8 +23,8 @@ var App = React.createClass({
 			start: '',
 			end: '',
 			routes: null,
-			distanceUnit: localStorage['steepless:distanceUnit'] || 'km',
-			heightUnit: localStorage['steepless:heightUnit'] || 'm',
+			distanceUnit: localStorage['travelAdvisor:distanceUnit'] || 'km',
+			heightUnit: localStorage['travelAdvisor:heightUnit'] || 'm',
 			travelMode: 'walking'
 		};
 	},
@@ -32,14 +32,14 @@ var App = React.createClass({
 	    // getRoutes();
 	},
 	componentDidUpdate: function(){
-		localStorage['steepless:distanceUnit'] = this.state.distanceUnit;
-		localStorage['steepless:heightUnit'] = this.state.heightUnit;
+		localStorage['travelAdvisor:distanceUnit'] = this.state.distanceUnit;
+		localStorage['travelAdvisor:heightUnit'] = this.state.heightUnit;
 	},
 	getRoutes: function(){
 		var self = this;
 		var state = this.state;
 
-		Steepless.directionsService.route({
+		TravelAdvisor.directionsService.route({
 			origin: state.start,
 			destination: state.end,
 			travelMode: google.maps.TravelMode[this.state.travelMode.toUpperCase()],
@@ -53,7 +53,7 @@ var App = React.createClass({
 					var distance = route.legs[0].distance.value;
 					if (distance > longestDistance) longestDistance = distance;
 				});
-				Steepless.longestDistance = longestDistance;
+				TravelAdvisor.longestDistance = longestDistance;
 				self.setState({
 					routes: routes.map(function(route, i){
 						return {
@@ -63,7 +63,7 @@ var App = React.createClass({
 					})
 				});
 
-				Steepless.directionsRenderer.setDirections(response);
+				TravelAdvisor.directionsRenderer.setDirections(response);
 
 				self.getElevations();
 			} else {
@@ -84,8 +84,8 @@ var App = React.createClass({
 				var route = data.route;
 				var path = route.overview_path;
 				var distance = route.legs[0].distance.value;
-				var samples = Math.round(distance/Steepless.longestDistance * (Steepless.chartWidth/Steepless.chartBarWidth));
-				Steepless.elevationService.getElevationAlongPath({
+				var samples = Math.round(distance/TravelAdvisor.longestDistance * (TravelAdvisor.chartWidth/TravelAdvisor.chartBarWidth));
+				TravelAdvisor.elevationService.getElevationAlongPath({
 					path: path,
 					samples: samples
 				}, function(result, status){
@@ -132,8 +132,8 @@ var App = React.createClass({
 				result.data.elevations = elevations;
 			});
 
-			Steepless.highestElevation = highestElevation;
-			Steepless.lowestElevation = lowestElevation;
+			TravelAdvisor.highestElevation = highestElevation;
+			TravelAdvisor.lowestElevation = lowestElevation;
 			self.setState({
 				routes: routes
 			});
@@ -145,7 +145,7 @@ var App = React.createClass({
 		});
 		this.setState(this.state);
 
-		Steepless.directionsRenderer.setRouteIndex(index);
+		TravelAdvisor.directionsRenderer.setRouteIndex(index);
 	},
 	handleUnitChange: function(units){
 		this.setState(units);
@@ -156,12 +156,14 @@ var App = React.createClass({
 		});
 	},
 	handleUpdate: function(travelMode, start, end) {
-        this.setState({
-            travelMode,
-            start,
-            end
-        });
+      this.setState({
+          travelMode,
+          start,
+          end
+      });
+      if (travelMode && start && end) {
         this.getRoutes();
+      }
     },
 	render: function(){
 		var units = {
@@ -174,7 +176,7 @@ var App = React.createClass({
 				<Map />
 				<div id="sidebar">
 					<header>
-						<h1><Icon type="mountains" width="24" height="24"></Icon> Travel Advisor</h1>
+						<h1><Icon type="mountains" width="24" height="24"></Icon> Walk/Cycle/Drive</h1>
 					</header>
 					<RouteForm start={this.state.start} end={this.state.end} units={units} travelMode={travelMode} onUnitChange={this.handleUnitChange} onTravelModeChange={this.handleTravelModeChange} onUpdate={this.handleUpdate}/>
 					<RouteList data={this.state.routes} travelMode={travelMode} units={units} onRouteClick={this.handleRouteClick} />
@@ -189,7 +191,7 @@ var Icon = React.createClass({
 		var type = this.props.type;
 		var title = this.props.title;
 		return (
-			<svg title={title} className="icon" dangerouslySetInnerHTML={{__html: '<use xlink:href="assets/icons.svg#icon-' + type + '"></use>'}} width={this.props.width} height={this.props.height}></svg>
+			<svg title={title} className="icon" dangerouslySetInnerHTML={{__html: '<use xlink:href="icons.svg#icon-' + type + '"></use>'}} width={this.props.width} height={this.props.height}></svg>
 		);
 	}
 });
@@ -223,7 +225,7 @@ var Map = React.createClass({
 		var map = new google.maps.Map(node, this.props.map);
 		Map.pinpointMarker.setMap(map);
 
-		Steepless.directionsRenderer.setMap(map);
+		TravelAdvisor.directionsRenderer.setMap(map);
 	},
 	render: function(){
 		return (
@@ -268,16 +270,17 @@ var Chart = React.createClass({
 });
 
 var RouteForm = React.createClass({
-	updateLocationHash: function(travelMode, start, end){
+	onUpdate: function(){
+      var travelMode = findDomNode(this.refs.travelMode).value;
+      var start = findDomNode(this.refs.start).value.trim();
+      var end = findDomNode(this.refs.end).value.trim();
+
 	    this.props.onUpdate(travelMode, start, end);
 	},
 	handleSubmit: function(e){
-	    e.preventDefault();
+	  e.preventDefault();
 
-		var travelMode = findDomNode(this.refs.travelMode).value;
-		var start = findDomNode(this.refs.start).value.trim();
-		var end = findDomNode(this.refs.end).value.trim();
-		this.updateLocationHash(travelMode, start, end);
+		this.onUpdate();
 	},
 	componentDidMount: function(){
 		var startNode = findDomNode(this.refs.start);
@@ -299,14 +302,11 @@ var RouteForm = React.createClass({
 		if (this.props.end) findDomNode(this.refs.end).value = this.props.end;
 	},
 	handleTravelModeChange: function(){
-		var travelMode = findDomNode(this.refs.travelMode).value;
-		this.updateLocationHash(travelMode);
+		this.onUpdate();
 	},
 	handleFlip: function(e){
 		e.preventDefault();
-		var start = findDomNode(this.refs.start).value.trim();
-		var end = findDomNode(this.refs.end).value.trim();
-		this.updateLocationHash(null, end, start);
+    this.onUpdate();
 	},
 	handleDistanceChange: function(){
 		var unit = findDomNode(this.refs.distanceSelect).value;
@@ -325,13 +325,12 @@ var RouteForm = React.createClass({
 		return (
 			<form id="directions-form" onSubmit={this.handleSubmit}>
 				<div className="field-section">
-					<label>
 						<select ref="travelMode" onChange={this.handleTravelModeChange}>
 							<option value="walking">Walking</option>
 							<option value="bicycling">Bicycling</option>
 							<option value="driving">Driving</option>
-						</select> from
-					</label>
+						</select><br />
+          <label htmlFor="start">from</label>
 					<input ref="start" id="directions-start" placeholder="Start" required />
 				</div>
 				<a href="#" id="flip-direction" onClick={this.handleFlip} title="Flip origin and destination" tabIndex="-1"><Icon type="arrow-right" width="14" height="14"></Icon></a>
@@ -427,14 +426,14 @@ var Route = React.createClass({
 		var route = data.route;
 		var leg = route.legs[0];
 		var distance = leg.distance.value;
-		var width = Math.ceil(distance/Steepless.longestDistance * Steepless.chartWidth);
+		var width = Math.ceil(distance/TravelAdvisor.longestDistance * TravelAdvisor.chartWidth);
 		//var chartWidth = {width: width};
 		var stats = data.stats;
-		var domain = [0, Steepless.highestElevation];
+		var domain = [0, TravelAdvisor.highestElevation];
 
 		var iconType = this.iconMap[this.props.travelMode];
 
-		var height = Math.round((Steepless.highestElevation - Steepless.lowestElevation) / 2);
+		var height = Math.round((TravelAdvisor.highestElevation - TravelAdvisor.lowestElevation) / 2);
 		var rise = null, drop = null, heightUnit = units.height;
 		if (stats){
 			var statsRise = stats.rise, statsDrop = stats.drop;
