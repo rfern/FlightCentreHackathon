@@ -21,18 +21,39 @@ const styles = {
 
 const tilesData = [
   {
-    img: 'image1.jpg',
+    img: '/thumbnails/thumbnailCreteGreece.jpg',
     title: 'Closer',
     author: 'remark',
     link: '/closer',
   },
   {
-    img: 'image2.jpg',
+    img: '/thumbnails/thumbnailEgypt Sphinx.jpg',
+    title: 'Closer VR Demo (Egypt)',
+    author: 'remark',
+    href: '/demo.html',
+  },
+  {
+    img: '/thumbnails/thumbnailSwissAlps.jpg',
     title: 'Tour advisor',
     author: 'remark',
     link: '/tripadvisor'
   },
 ];
+
+const AppLink = ({tile}) => {
+  if (tile.href) {
+    return (
+      <a href={tile.href}>
+        <img style={{width: '100%', height: 180}} alt={tile.title} src={tile.img} />
+      </a>
+    );
+  }
+  return (
+    <Link to={tile.link}>
+      <img style={{width: '100%', height: 180}} alt={tile.title} src={tile.img} />
+    </Link>
+  );
+};
 
 /**
  * A simple example of a scrollable `GridList` containing a [Subheader](/#/components/subheader).
@@ -43,17 +64,15 @@ const Apps = () => (
       cellHeight={180}
       style={styles.gridList}
     >
-      <Subheader>Available Modules</Subheader>
-      {tilesData.map((tile) => (
+      <Subheader>Available Applications</Subheader>
+      {tilesData.map((tile, index) => (
         <GridTile
-          key={tile.img}
+          key={index}
           title={tile.title}
           subtitle={<span>by <b>{tile.author}</b></span>}
           actionIcon={<IconButton><StarBorder color="white" /></IconButton>}
         >
-          <Link to={tile.link}>
-            <img alt={tile.title} src={tile.img} />
-          </Link>
+        <AppLink tile={tile}/>
         </GridTile>
       ))}
     </GridList>
