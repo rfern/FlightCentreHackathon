@@ -1,11 +1,11 @@
 import alt from '../alt';
 
-class MyActions {
+class SearchActions {
     constructor() {
         this.generateActions(
-          'demoAction',
+          'search',
         );
     }
 };
 
-export default alt.createActions(MyActions);
+export default alt.createActions(SearchActions);
