@@ -122,6 +122,11 @@ const defaultSearchResults = [
     url: '/panorama/TimesSquareNY.jpg',
     tags: ['architecture ny usa america'],
   },
+  {
+    location: 'Fishburners Brisbane',
+    url: '/panorama/Fishburners.jpg',
+    tags: ['australia qld hackathon'],
+  },
 
 ];
 
