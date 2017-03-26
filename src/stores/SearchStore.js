@@ -4,127 +4,127 @@ import Actions from '../actions/SearchActions'
 const defaultSearchResults = [
   {
     location: 'Boston',
-    url: '/panorama/Boston.jpg',
-    tags: ['cool', 'some other tag'],
+    file: 'Boston.jpg',
+    tags: ['america'],
   },
   {
     location: 'Bulgaria',
-    url: '/panorama/Bulgaria-Alexander-Nevsky-Church.jpg',
+    file: 'Bulgaria-Alexander-Nevsky-Church.jpg',
     tags: ['church', 'architecture'],
   },
   {
     location: 'Egypt',
-    url: '/panorama/Egypt Sphinx.jpg',
+    file: 'Egypt Sphinx.jpg',
     tags: ['architecture'],
   },
   {
     location: 'Victoria',
-    url: '/panorama/12ApostlesVic.jpg',
-    tags: ['nature victoria'],
+    file: '12ApostlesVic.jpg',
+    tags: ['nature'],
   },
   {
     location: 'France',
-    url: '/panorama/AbbeyFrance.jpg',
+    file: 'AbbeyFrance.jpg',
     tags: ['architecture'],
   },
   {
     location: 'Croatia',
-    url: '/panorama/BeachCroatia.jpg',
-    tags: ['beach nature'],
+    file: 'BeachCroatia.jpg',
+    tags: ['beach', 'nature'],
   },
   {
     location: 'USA',
-    url: '/panorama/BryceCanyonUSA.jpg',
-    tags: ['nature america'],
+    file: 'BryceCanyonUSA.jpg',
+    tags: ['nature', 'america'],
   },
   {
     location: 'Canada',
-    url: '/panorama/Canada_Ottawa_Panorama.jpg',
+    file: 'Canada_Ottawa_Panorama.jpg',
     tags: ['ottawa'],
   },
   {
     location: 'Germany',
-    url: '/panorama/CologneGermany.jpg',
+    file: 'CologneGermany.jpg',
     tags: ['cologne'],
   },
   {
     location: 'Greece',
-    url: '/panorama/CreteGreece.jpg',
+    file: 'CreteGreece.jpg',
     tags: ['crete'],
   },
   {
     location: 'Russia',
-    url: '/panorama/FineArtMuseumRussia.jpg',
+    file: 'FineArtMuseumRussia.jpg',
     tags: ['architecture'],
   },
   {
     location: 'Florida',
-    url: '/panorama/FloridaKeys.jpg',
-    tags: ['keys nature'],
+    file: 'FloridaKeys.jpg',
+    tags: ['keys', 'nature'],
   },
   {
     location: 'Germany',
-    url: '/panorama/HohbergenGermany.jpg',
+    file: 'HohbergenGermany.jpg',
     tags: ['hohbergen'],
   },
   {
     location: 'Florence',
-    url: '/panorama/HotelFlorence.jpg',
-    tags: ['accomodation italy'],
+    file: 'HotelFlorence.jpg',
+    tags: ['accomodation', 'hotel', 'italy'],
   },
   {
     location: 'New York',
-    url: '/panorama/HotelNY.jpg',
-    tags: ['NY accomodation'],
+    file: 'HotelNY.jpg',
+    tags: ['NY', 'accomodation'],
   },
   {
     location: 'Switzerland',
-    url: '/panorama/Mountains.jpg',
-    tags: ['swiss alps nature'],
+    file: 'Mountains.jpg',
+    tags: ['swiss alps', 'nature'],
   },
   {
     location: 'New Zealand',
-    url: '/panorama/MtCookNZ.jpg',
-    tags: ['nature nz mt cook'],
+    file: 'MtCookNZ.jpg',
+    tags: ['nature', 'nz', 'mt cook'],
   },
   {
     location: 'Canada',
-    url: '/panorama/NiagraCanada.jpg',
-    tags: ['niagara nature'],
+    file: 'NiagraCanada.jpg',
+    tags: ['niagara', 'nature'],
   },
   {
     location: 'Tasmania',
-    url: '/panorama/SevenMileBeachTasmania.jpg',
-    tags: ['nature tas'],
+    file: 'SevenMileBeachTasmania.jpg',
+    tags: ['nature', 'tas'],
   },
   {
     location: 'Germany',
-    url: '/panorama/St_Bartholomae_Germany.jpg',
+    file: 'St_Bartholomae_Germany.jpg',
     tags: ['architecture'],
   },
   {
     location: 'Switzerland',
-    url: '/panorama/SwissAlps.jpg',
+    file: 'SwissAlps.jpg',
     tags: ['swiss alps'],
   },
   {
     location: 'Sydney',
-    url: '/panorama/Sydney_Harbour_Bridge_night.jpg',
-    tags: ['architecture australia'],
+    file: 'Sydney_Harbour_Bridge_night.jpg',
+    tags: ['architecture', 'australia'],
   },
   {
     location: 'Sydney',
-    url: '/panorama/Sydney.jpg',
-    tags: ['architecture australia'],
+    file: 'Sydney.jpg',
+    tags: ['architecture', 'australia'],
   },
   {
     location: 'New York',
-    url: '/panorama/TimesSquareNY.jpg',
-    tags: ['architecture ny usa america'],
+    file: 'TimesSquareNY.jpg',
+    tags: ['architecture', 'ny', 'usa', 'america'],
   },
   {
     location: 'Fishburners Brisbane',
-    url: '/panorama/Fishburners.jpg',
+    file: 'Fishburners.jpg',
     tags: ['australia qld hackathon'],
   },
 
@@ -142,14 +142,18 @@ class SearchStore {
       handleSearch: Actions.search,
     });
 
+    this.searchText = '';
     this.searchResults = [];
   }
 
   handleSearch(search) {
+    this.searchText = search;
     if (!search) {
       this.searchResults = [];
     } else {
-      this.searchResults = defaultSearchResults.filter(result => match(result, search.toLowerCase()));
+      this.searchResults = defaultSearchResults
+        .filter(result => match(result, search.toLowerCase()))
+        .sort(result => result.location);
     }
   }
 }

@@ -13,8 +13,9 @@ const styles = {
   },
   gridList: {
     width: 500,
-    height: 450,
+    maxHeight: '90vh',
     overflowY: 'auto',
+    paddingBottom: '1em',
   },
 };
 

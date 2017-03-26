@@ -4,33 +4,34 @@ import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import { Link } from 'react-router-dom';
 import {GridList, GridTile} from 'material-ui/GridList';
-import Chip from 'material-ui/Chip';
-import IconButton from 'material-ui/IconButton';
 import Subheader from 'material-ui/Subheader';
-import StarBorder from 'material-ui/svg-icons/toggle/star-border';
 
 import store from '../../stores/SearchStore';
 import Actions from '../../actions/SearchActions';
 
 
 const styles = {
+  paper: {
+    padding: '1em',
+  },
   root: {
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
   },
   gridList: {
-    width: 500,
-    height: 450,
+    width: '80vw',
+    maxHeight: '90vh',
     overflowY: 'auto',
+    paddingBottom: '1em',
   },
 };
 
 
-const Search = ({ searchResults, handleSearch }) => {
+const Search = ({ searchText, searchResults, handleSearch }) => {
   return (
-  <Paper zDepth={3}>
-    <TextField hintText="Search for images" floatingLabelText="Search" fullWidth={true} onChange={(e, text) => { handleSearch(text.toLowerCase()) }}/>
+  <Paper style={styles.paper} zDepth={3}>
+    <TextField value={searchText} hintText="Search for images" floatingLabelText="Search" fullWidth={true} onChange={(e, text) => { handleSearch(text.toLowerCase()) }}/>
 
        <div style={styles.root}>
          <GridList
@@ -39,15 +40,15 @@ const Search = ({ searchResults, handleSearch }) => {
          >
            <Subheader>Search Results</Subheader>
            {searchResults.map((tile) => (
-             <GridTile
-               key={tile.url}
-               title={tile.location}
-               subtitle={tile.tags.join(', ')}
-             >
-               <Link to={tile.url.replace('panorama', 'vr')}>
-                 <img alt={tile.location} src={tile.url} />
-               </Link>
-             </GridTile>
+             <Link to={`/vr/${tile.file}`}>
+               <GridTile
+                 key={tile.file}
+                 title={tile.location}
+                 subtitle={tile.tags.join(', ')}
+               >
+                 <img style={{width: '100%', height: 180}} alt={tile.location} src={`/thumbnails/thumbnail${tile.file}`} />
+               </GridTile>
+             </Link>
            ))}
          </GridList>
        </div>
